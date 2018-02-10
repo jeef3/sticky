@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, ipcMain, BrowserWindow } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 
@@ -13,8 +13,9 @@ if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 200,
+    height: 200,
+    frame: false,
   });
 
   // and load the index.html of the app.
@@ -32,6 +33,20 @@ const createWindow = async () => {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  const content = fs.readFileSync('./sticky.txt', 'utf-8');
+
+  ipcMain.on('load-stickies', (event, arg) => {
+    console.log('arg:', arg);
+    console.log('sending:', content);
+    event.sender.send('stickies-loaded', content);
+  });
+
+  ipcMain.on('save-stickies', (event, arg) => {
+    console.log('arg:', arg);
+    fs.writeFileSync('./sticky.txt', arg, 'utf-8');
+    event.sender.send('stickies-saved', content);
   });
 };
 
