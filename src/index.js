@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import { app, ipcMain, BrowserWindow } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';

@@ -58,7 +58,7 @@ class TextEdit extends React.Component {
   render() {
     return (
       <Container
-        ref={el => (this.el = el)}
+        innerRef={el => (this.el = el)}
         contentEditable
         className="content"
         onInput={this.handleUpdate}
