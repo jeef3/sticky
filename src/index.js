@@ -1,7 +1,9 @@
 import fs from 'fs';
 
 import { app, ipcMain, BrowserWindow } from 'electron';
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+import installExtension, {
+  REACT_DEVELOPER_TOOLS
+} from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -17,7 +19,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     width: 200,
     height: 200,
-    frame: false,
+    frame: false
   });
 
   // and load the index.html of the app.

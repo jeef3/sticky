@@ -22,10 +22,11 @@ class TextEdit extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (!this.el || (
-      nextProps.defaultValue !== this.el.innerHTML &&
-      nextProps.defaultValue !== this.props.defaultValue
-    )) {
+    if (
+      !this.el ||
+      (nextProps.defaultValue !== this.el.innerHTML &&
+        nextProps.defaultValue !== this.props.defaultValue)
+    ) {
       return true;
     }
 

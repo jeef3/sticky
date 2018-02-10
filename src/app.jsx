@@ -29,10 +29,7 @@ export default class App extends React.Component {
     return (
       <Container>
         <TitleBar />
-        <TextEdit
-          defaultValue={this.state.data}
-          onChange={this.handleUpdate}
-        />
+        <TextEdit defaultValue={this.state.data} onChange={this.handleUpdate} />
       </Container>
     );
   }
