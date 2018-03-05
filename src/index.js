@@ -55,17 +55,18 @@ const createWindow = async () => {
   });
 
   ipcMain.on('save-stickies', (event, arg) => {
-    console.log('saving:', arg);
+    const str = JSON.stringify(arg);
+    console.log('saving:', str);
 
-    fs.writeFile('./sticky.txt', arg, 'utf-8', (err, content) => {
+    fs.writeFile('./sticky.txt', str, 'utf-8', err => {
       if (err) {
         console.log(err);
-        event.sender.send('stickies-save-failed', content);
+        event.sender.send('stickies-save-failed');
         return;
       }
 
       console.log('saved');
-      event.sender.send('stickies-saved', content);
+      event.sender.send('stickies-saved');
     });
   });
 };
