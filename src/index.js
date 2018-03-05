@@ -39,18 +39,34 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const content = fs.readFileSync('./sticky.txt', 'utf-8');
+  ipcMain.on('load-stickies', event => {
+    console.log('Loading...');
+    fs.readFile('./sticky.txt', 'utf-8', (err, content) => {
+      if (err) {
+        console.log(err);
+        event.sender.send('stickies-load-failed', err);
+        return;
+      }
 
-  ipcMain.on('load-stickies', (event, arg) => {
-    console.log('arg:', arg);
-    console.log('sending:', content);
-    event.sender.send('stickies-loaded', content);
+      console.log(`✔ Loaded:\n${content}`);
+      console.log('-----');
+      event.sender.send('stickies-loaded', content);
+    });
   });
 
   ipcMain.on('save-stickies', (event, arg) => {
-    console.log('arg:', arg);
-    fs.writeFileSync('./sticky.txt', arg, 'utf-8');
-    event.sender.send('stickies-saved', content);
+    console.log('saving:', arg);
+
+    fs.writeFile('./sticky.txt', arg, 'utf-8', (err, content) => {
+      if (err) {
+        console.log(err);
+        event.sender.send('stickies-save-failed', content);
+        return;
+      }
+
+      console.log('saved');
+      event.sender.send('stickies-saved', content);
+    });
   });
 };
 

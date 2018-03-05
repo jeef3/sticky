@@ -22,7 +22,11 @@ export default class App extends React.Component {
   }
 
   handleUpdate(data) {
-    ipcRenderer.send('save-stickies', data);
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      console.log('saving...');
+      ipcRenderer.send('save-stickies', data);
+    }, 1000);
   }
 
   render() {
