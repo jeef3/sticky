@@ -1,18 +1,22 @@
 import React from 'react';
 import { ipcRenderer } from 'electron';
-import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
-// import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import {
+  convertToRaw,
+  convertFromRaw,
+  Editor,
+  EditorState,
+  RichUtils
+} from 'draft-js';
 
 import Container from './Container';
 import TitleBar from './TitleBar';
-import TextEdit from './TextEdit';
 
 export default class App extends React.Component {
   constructor() {
     super();
     this.state = { editorState: EditorState.createEmpty() };
 
+    this.handleKeyCommand = this.handleKeyCommand.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
   }
 
@@ -29,6 +33,14 @@ export default class App extends React.Component {
     ipcRenderer.send('load-stickies', '');
   }
 
+  handleKeyCommand(command, editorState) {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+
+    if (newState) {
+      this.handleUpdate(newState);
+    }
+  }
+
   handleUpdate(editorState) {
     this.setState({ editorState });
 
@@ -41,13 +53,18 @@ export default class App extends React.Component {
     }, 1000);
   }
 
+  handle() {
+    RichUtils.toggleInlineStyle(this.state.editorState, '');
+  }
+
   render() {
     return (
       <Container>
         <TitleBar />
         <Editor
           editorState={this.state.editorState}
-          onEditorStateChange={this.handleUpdate}
+          handleKeyCommand={this.handleKeyCommand}
+          onChange={this.handleUpdate}
         />
       </Container>
     );
