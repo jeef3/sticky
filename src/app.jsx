@@ -3,6 +3,7 @@ import { ipcRenderer } from 'electron';
 import {
   convertToRaw,
   convertFromRaw,
+  CompositeDecorator,
   Editor,
   EditorState,
   RichUtils
@@ -21,11 +22,67 @@ import EditorContainer from './EditorContainer';
 import EditorButton from './EditorButton';
 import EditorBar from './EditorBar';
 
+const HASHTAG_REGEX = /#[\w\u0590-\u05ff]+/g;
+const CHECKBOX_REGEX = /\[ \]/g;
+
+function findWithRegex(regex, contentBlock, callback) {
+  const text = contentBlock.getText();
+  let matchArr, start;
+
+  while ((matchArr = regex.exec(text)) !== null) {
+    start = matchArr.index;
+    callback(start, start + matchArr[0].length);
+  }
+}
+
+function hashtagStrategy(contentBlock, callback) {
+  findWithRegex(HASHTAG_REGEX, contentBlock, callback);
+}
+
+function checkboxStrategy(contentBlock, callback) {
+  findWithRegex(CHECKBOX_REGEX, contentBlock, callback);
+}
+
+const HashtagSpan = props => (
+  <span
+    style={{
+      color: 'blue',
+      fontWeight: ' bold'
+    }}
+    data-offset-key={props.offsetKey}
+  >
+    {props.children}
+  </span>
+);
+
+const CheckboxSpan = props => (
+  <span>
+    <input
+      type="checkbox"
+      style={{
+        margin: 0
+      }}
+    />
+  </span>
+);
+
+const compositeDecorator = new CompositeDecorator([
+  {
+    strategy: hashtagStrategy,
+    component: HashtagSpan
+  },
+  {
+    strategy: checkboxStrategy,
+    component: CheckboxSpan
+  }
+]);
+
 export default class App extends React.Component {
   constructor() {
     super();
+
     this.state = {
-      editorState: EditorState.createEmpty(),
+      editorState: EditorState.createEmpty(compositeDecorator),
       selectionRect: null
     };
 
@@ -64,7 +121,8 @@ export default class App extends React.Component {
       console.log('Loaded', JSON.parse(raw));
       this.setState({
         editorState: EditorState.createWithContent(
-          convertFromRaw(JSON.parse(raw))
+          convertFromRaw(JSON.parse(raw)),
+          compositeDecorator
         )
       });
     });
@@ -75,15 +133,15 @@ export default class App extends React.Component {
   handleUpdate(editorState) {
     this.setState(() => ({ editorState }));
 
-    const selection = window.getSelection();
+    // const selection = window.getSelection();
 
-    if (selection && selection.rangeCount) {
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      this.setState(() => ({ selectionRect: rect }));
-    } else {
-      this.setState(() => ({ selectionRect: null }));
-    }
+    // if (selection && selection.rangeCount) {
+    //   const range = selection.getRangeAt(0);
+    //   const rect = range.getBoundingClientRect();
+    //   this.setState(() => ({ selectionRect: rect }));
+    // } else {
+    //   this.setState(() => ({ selectionRect: null }));
+    // }
 
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
