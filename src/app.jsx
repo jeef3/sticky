@@ -46,8 +46,8 @@ function checkboxStrategy(contentBlock, callback) {
 const HashtagSpan = props => (
   <span
     style={{
-      color: 'blue',
-      fontWeight: ' bold'
+      color: '#4F5D75',
+      fontWeight: 'bold'
     }}
     data-offset-key={props.offsetKey}
   >

@@ -6,7 +6,8 @@ export default styled.div`
   font-family: Lato;
   font-size: 16px;
 
-  background: #ffbfbf;
+  color: #2d3142;
+  background: #F8C1C7;
 
   display: flex;
   flex-direction: column;

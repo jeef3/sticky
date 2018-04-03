@@ -5,8 +5,8 @@ export default styled.div`
 
   height: 15px;
 
-  border-bottom: solid 1px rgba(0, 0, 0, 0.2);
+  background: #F4A3AB;
 
   -webkit-user-select: none;
-  -webkit-app-region: drag
+  -webkit-app-region: drag;
 `;
